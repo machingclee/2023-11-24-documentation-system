@@ -1,5 +1,5 @@
 import "@radix-ui/themes/styles.css"
-import "./theme-config.css"
+// import "./theme-config.css"
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
@@ -31,15 +31,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body style={{ height: "100vh", padding: 0, margin: 0 }}>
-        <Theme appearance="light" panelBackground="solid" radius="full">          <div >
-          <NavBar />
-          <div style={{ height: "calc(100vh - 42px)" }}>
-            <Container>
-              <Spacer />
-              <div className={inter.variable}>{children}</div>
-            </Container>
+        <Theme appearance="light" panelBackground="solid" radius="full">
+          <div >
+            <NavBar />
+            <div style={{ height: "calc(100vh - 42px)" }}>
+              <Container>
+                <Spacer />
+                <div className={inter.variable}>{children}</div>
+              </Container>
+            </div>
           </div>
-        </div>
           {/* <ThemePanel /> */}
         </Theme>
       </body>
