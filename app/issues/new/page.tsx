@@ -1,5 +1,6 @@
-"use client"
-import SimpleMDE from "react-simplemde-editor";
+"use client";
+import dynamic from 'next/dynamic'
+// import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { Button, TextField } from "@radix-ui/themes"
 import React, { useMemo, useRef, useState } from "react"
@@ -10,6 +11,9 @@ import useRerender from "@/hooks/useRerender";
 import useGetFieldUpdates from "@/hooks/useGetFieldUpdates";
 import lodash, { debounce, update } from "lodash";
 import Spacer from "@/component/Spacer";
+
+const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false })
+
 
 type IssueForm = {
     title: string;
