@@ -25,14 +25,17 @@ const NavBar = () => {
             className="border-b"
         >
             <Container className="flex space-x-6">
-                <Link href="/" className="items-center"><IoBugSharp /></Link>
+                <Link href="/"
+                    className="flex items-center"
+                >
+                    <IoBugSharp />
+                </Link>
                 <ul className="flex space-x-6">
                     {links.map(link => {
                         const { href, label } = link;
                         return (
                             <li key={href}>
                                 <Link
-
                                     className={
                                         classnames({
                                             "text-zinc-900": href === currentPath,
