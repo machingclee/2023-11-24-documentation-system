@@ -1,10 +1,11 @@
 "use client";
-import { Container } from "@mui/material";
+import { Button, Container } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react"
 import { IoBugSharp } from "react-icons/io5";
 import classnames from "classnames";
+import Spacer from "@/component/Spacer";
 
 const NavBar = () => {
     const currentPath = usePathname();
@@ -21,31 +22,34 @@ const NavBar = () => {
             alignItems: "center",
             paddingLeft: 10,
             paddingRight: 10,
+            borderBottom: "1px solid rgba(0,0,0,0.1)"
         }}
-            className="border-b"
         >
-            <Container className="flex space-x-6">
-                <ul className="flex space-x-6">
+            <Container >
+                <div style={{ display: "flex" }}>
                     {links.map(link => {
                         const { href, label } = link;
+                        const isClicked = currentPath === href;
                         return (
-                            <li key={href}>
+                            <>
                                 <Link
-                                    className={
-                                        classnames({
-                                            "text-zinc-900": href === currentPath,
-                                            "text-zinc-500": href !== currentPath,
-                                            "hover:text-zinc-800 transition-colors": true
-                                        })
-                                    }
+                                    key={href}
                                     href={href}
                                 >
-                                    {label}
+                                    <Button sx={
+                                        {
+                                            fontWeight: isClicked ? "bold" : "regular",
+
+                                        }
+                                    }>
+                                        {label}
+                                    </Button>
                                 </Link>
-                            </li>
+                                <Spacer width={10} />
+                            </>
                         )
                     })}
-                </ul>
+                </div>
             </Container>
         </div>
     )

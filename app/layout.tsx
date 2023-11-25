@@ -1,5 +1,3 @@
-import "@radix-ui/themes/styles.css"
-// import "./theme-config.css"
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
@@ -7,10 +5,8 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import '@radix-ui/themes/styles.css';
 import NavBar from './NavBar';
 import Spacer from '@/component/Spacer';
-import { Theme, ThemePanel } from '@radix-ui/themes';
 import { Container } from '@mui/material';
 
 const inter = Inter({
@@ -31,18 +27,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body style={{ height: "100vh", padding: 0, margin: 0 }}>
-        <Theme appearance="light" panelBackground="solid" radius="full">
-          <div >
-            <NavBar />
-            <div style={{ height: "calc(100vh - 42px)" }}>
-              <Container>
-                <Spacer />
-                <div className={inter.variable}>{children}</div>
-              </Container>
-            </div>
+        <div >
+          <NavBar />
+          <div style={{ height: "calc(100vh - 42px)" }}>
+            <Container>
+              <Spacer />
+              <div className={inter.variable}>{children}</div>
+            </Container>
           </div>
-          {/* <ThemePanel /> */}
-        </Theme>
+        </div>
+
       </body>
     </html>
   )
