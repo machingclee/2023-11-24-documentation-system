@@ -6,6 +6,7 @@ import Tag from "../Tag";
 import Spacer from "@/component/Spacer";
 import dayjs from "dayjs"
 import dateUtil from "@/util/dateUtil";
+import Button from '@mui/material-next/Button';
 
 type Params = {
     params: {
@@ -45,6 +46,7 @@ export default async (props: Params) => {
                 </div>
             </div>
             <Spacer />
+            <Button variant="filled" size="medium">Edit</Button>
             <Spacer />
             <div>
                 <MarkdownComponent source={issue.description} />

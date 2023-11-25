@@ -25,15 +25,16 @@ const NavBar = () => {
             borderBottom: "1px solid rgba(0,0,0,0.1)"
         }}
         >
-            <Container >
+            <Container style={{ display: "flex", justifyContent: "space-between" }}>
                 <div style={{ display: "flex" }}>
+
                     {links.map(link => {
                         const { href, label } = link;
                         const isClicked = currentPath === href;
                         return (
-                            <>
+                            <React.Fragment key={href}>
                                 <Link
-                                    key={href}
+
                                     href={href}
                                 >
                                     <Button sx={
@@ -46,10 +47,12 @@ const NavBar = () => {
                                     </Button>
                                 </Link>
                                 <Spacer width={10} />
-                            </>
+                            </React.Fragment>
                         )
                     })}
+
                 </div>
+                <Link href={"/login"} ><Button>Login</Button></Link>
             </Container>
         </div>
     )
