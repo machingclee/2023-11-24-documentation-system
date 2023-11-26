@@ -1,7 +1,12 @@
 import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
+import res from "./res";
 
+const ALLOWED_EMAILS = process.env.EMAILS_ALLOWED?.split(",") || [];
+const DOMAINS_ALLOWED = process.env.DOMAINS_ALLOWED?.split(",") || [];
+const JWT_SECRET = process.env?.JWT_SECRET || ""
+const FRONTEND_URL = process.env?.FRONTEND_URL || ""
 
 const oAuth2Client = new google.auth.OAuth2(
     {
@@ -27,9 +32,6 @@ const getRedirectOAuthLoginPage = async () => {
     return url;
 }
 
-const allowedEmails = process.env.EMAILS_ALLOWED?.split(",") || [];
-const jwtSecret = process.env?.JWT_SECRET || ""
-const frontendUrl = process.env?.FRONTEND_URL || ""
 
 const oauthRedirectGetRequest = async (req: NextRequest) => {
     const code = req.nextUrl.searchParams.get("code") || "";
@@ -42,19 +44,21 @@ const oauthRedirectGetRequest = async (req: NextRequest) => {
     });
     const userData = res_.data;
 
-    const hasRight = process.env.EMAILS_ALLOWED?.split(",").includes(userData.email || "");
+    const isAllowedEmail = process.env.EMAILS_ALLOWED?.split(",").includes(userData.email || "");
+    const isAllowedDomain = DOMAINS_ALLOWED.some(domain => {
+        return userData.email?.endsWith(domain) || false;
+    });
+    const hasRight = isAllowedEmail || isAllowedDomain;
+
     if (!hasRight) {
-        NextResponse.json(
-            `Only ${allowedEmails.join(", ")} has access to this project.`,
-            { status: 400 }
-        );
+        return { sucess: false, errorMessage: `Only ${ALLOWED_EMAILS.join(", ")} has access to this project.` }
     }
     const token = jwt.sign(
         { ...userData },
-        jwtSecret,
+        JWT_SECRET,
         { expiresIn: 60 * 60 }
     );
-    return { tokenResUrl: `${frontendUrl}/token/${token}` };
+    return { success: true, result: { tokenResUrl: `${FRONTEND_URL}/token/${token}` } };
 }
 
 export default {

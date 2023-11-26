@@ -1,9 +1,12 @@
 "use client"
-import useAuthStore from '@/store/useAuthStore'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { GoogleTokenPayload } from '../../api/auth/authenticate/route'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/navigation'
+import { useAppDispatch } from '../../../redux/app/hooks'
+import authSlice from '../../../redux/slices/authSlice'
+import { GoogleTokenPayload } from '../../api/auth/verify-token/route'
+import useApiClient from '../../../hooks/useApiClient'
 
 type Params = {
     params: {
@@ -12,21 +15,23 @@ type Params = {
 }
 
 const TokenPage = (props: Params) => {
+    const dispatch = useAppDispatch();
+    const router = useRouter();
     const { params } = props;
     const { token } = params;
     const [hydrated, setHydrated] = useState(false);
-    const { setAccessToken, setUser } = useAuthStore();
+    const apiClient = useApiClient();
 
     const authenticateUser = async (token: string) => {
-        const res = await axios.post<{ result: { payload: GoogleTokenPayload } }>(
-            "/api/auth/authenticate",
+        const res = await apiClient.post<{ result: { payload: GoogleTokenPayload } }>(
+            "/api/auth/verify-token",
             { accessToken: token }
         );
         const data = res.data;
-        console.log("datadatadatadatadata", data);
-        setUser(data.result.payload);
+        console.log("data", data);
+        dispatch(authSlice.actions.setUser(data.result.payload));
+        router.push("/");
     }
-
 
     useEffect(() => {
         setHydrated(true);
@@ -34,7 +39,7 @@ const TokenPage = (props: Params) => {
 
     useEffect(() => {
         if (token && hydrated) {
-            setAccessToken(token);
+            dispatch(authSlice.actions.setAccessToken(token));
         }
     }, [hydrated, token])
 
@@ -46,7 +51,7 @@ const TokenPage = (props: Params) => {
 
     return (
         <div>
-            {token}
+
         </div>
     )
 }

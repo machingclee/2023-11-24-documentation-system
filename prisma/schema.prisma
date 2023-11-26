@@ -13,6 +13,7 @@ datasource db {
 
 model Issue {
   id          Int      @id @default(autoincrement())
+  email       String?  @db.Text
   title       String   @db.VarChar(255)
   description String   @db.Text
   status      Status   @default(OPEN)

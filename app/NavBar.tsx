@@ -3,9 +3,12 @@ import { Button, Container } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react"
-import { IoBugSharp } from "react-icons/io5";
-import classnames from "classnames";
-import Spacer from "@/component/Spacer";
+import { useSession } from "next-auth/react"
+import Spacer from "../component/Spacer";
+import { useAppDispatch, useAppSelector } from "../redux/app/hooks";
+import authSlice from "../redux/slices/authSlice";
+import useLoginStatus from "../hooks/useLoginStatus";
+import useLogout from "../hooks/useLogout";
 
 const NavBar = () => {
     const currentPath = usePathname();
@@ -13,7 +16,10 @@ const NavBar = () => {
         { label: "Dashboard", href: "/" },
         { label: "Issues", href: "/issues" }
     ]
-
+    const dispatch = useAppDispatch();
+    const { accessToken, userDetail } = useLoginStatus();
+    const isLoggedIn = accessToken !== "";
+    const logout = useLogout();
 
     return (
         <div style={{
@@ -52,7 +58,18 @@ const NavBar = () => {
                     })}
 
                 </div>
-                <Link href={"/login"} ><Button>Login</Button></Link>
+                {!isLoggedIn && <Link href={"/login"} ><Button>Login</Button></Link>}
+                {isLoggedIn && <div style={{ fontSize: 12 }}>
+                    <span style={{
+                        border: "1px solid rgba(0,0,0,0.2)",
+                        padding: "6px 8px",
+                        borderRadius: 4,
+                        marginRight: 4,
+                    }}>
+                        {userDetail?.email}
+                    </span>
+                    <Button onClick={logout}>Logout</Button>
+                </div>}
             </Container>
         </div>
     )

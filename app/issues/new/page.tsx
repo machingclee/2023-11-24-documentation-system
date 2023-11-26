@@ -1,15 +1,16 @@
 "use client";
 import dynamic from 'next/dynamic';
 // import SimpleMDE from "react-simplemde-editor";
-import MarkdownComponent from '@/component/MarkdownComponent';
-import Spacer from "@/component/Spacer";
-import useGetFieldUpdates from "@/hooks/useGetFieldUpdates";
 import { Alert, Box, Button, TextField } from '@mui/material';
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
 import { debounce } from "lodash";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
+import MarkdownComponent from '../../../component/MarkdownComponent';
+import Spacer from '../../../component/Spacer';
+import useGetFieldUpdates from '../../../hooks/useGetFieldUpdates';
+import useApiClient from '../../../hooks/useApiClient';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), { ssr: false })
 
@@ -27,6 +28,7 @@ type ErrorResponse = {
 const NewIssuePage = () => {
     const form = useRef<IssueForm>({ description: "", title: "" });
     const [desc, setDesc] = useState("");
+    const apiClient = useApiClient();
     const { fieldUpdate } = useGetFieldUpdates(form);
     const [err, setErr] = useState<ErrorResponse>([]);
     const debouncedSetDesc = debounce((text: string) => { setDesc(text) }, 100);
@@ -40,7 +42,7 @@ const NewIssuePage = () => {
 
     const submit = async () => {
         try {
-            await axios.post("/api/issues", form.current);
+            await apiClient.post("/api/issues", form.current);
             router.push("/issues");
         } catch (error: any) {
             const errRes = error?.response?.data as ErrorResponse | undefined;
@@ -89,15 +91,12 @@ const NewIssuePage = () => {
             </div>
             <Spacer />
             {err && <>
-                {err.map(e => {
-                    return (
-                        <>
-                            <Alert severity="error">{e.message}</Alert>
-                            <Spacer />
-                        </>
-                    )
-                })}
-            </>}
+
+                <Alert severity="error">{JSON.stringify(err)}</Alert>
+                <Spacer />
+            </>
+
+            }
             <div>
                 <div style={{ display: "flex" }}>
                     <Box
