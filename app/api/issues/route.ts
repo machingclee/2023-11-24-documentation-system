@@ -50,9 +50,6 @@ export const POST = async (req: NextRequest) => {
         }
     })
 
-    const res = NextResponse.next();
-
-
     return NextResponse.json(newIssue, { status: 201 })
 }
 

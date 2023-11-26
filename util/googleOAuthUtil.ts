@@ -56,7 +56,7 @@ const oauthRedirectGetRequest = async (req: NextRequest) => {
     const token = jwt.sign(
         { ...userData },
         JWT_SECRET,
-        { expiresIn: 60 * 60 }
+        { expiresIn: 604800 }
     );
     return { success: true, result: { tokenResUrl: `${FRONTEND_URL}/token/${token}` } };
 }

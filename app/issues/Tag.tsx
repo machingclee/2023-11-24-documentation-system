@@ -13,7 +13,8 @@ const Tag = ({ status }: { status: Status }) => {
         <div style={{
             fontWeight: "bold",
             borderRadius: 20,
-            padding: "3px 15px",
+            fontSize: 12,
+            padding: "6px 15px",
             display: "inline-block",
             ...tagStyle[status]
         }}>

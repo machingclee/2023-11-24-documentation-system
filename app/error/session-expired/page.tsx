@@ -1,8 +1,9 @@
+import { Container } from '@mui/material';
 import React from 'react'
 
 const SessionExpired = () => {
     return (
-        <div>Session Expired </ div>
+        <Container>Session Expired</Container>
     )
 }
 

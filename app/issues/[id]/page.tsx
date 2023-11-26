@@ -1,13 +1,17 @@
+"use client";
 
-import { Box } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { notFound } from "next/navigation";
 import Tag from "../Tag";
-import dayjs from "dayjs"
 import Button from '@mui/material-next/Button';
 import prisma from "../../../prisma/client";
 import MarkdownComponent from "../../../component/MarkdownComponent";
 import Spacer from "../../../component/Spacer";
 import dateUtil from "../../../util/dateUtil";
+import useApiClient from "../../../hooks/useApiClient";
+import { useEffect, useState } from "react";
+import apiRoutes from "../../../constants/apiRoutes";
+import { Issue } from "@prisma/client";
 
 type Params = {
     params: {
@@ -15,10 +19,12 @@ type Params = {
     }
 }
 
-export default async (props: Params) => {
+export default (props: Params) => {
     const { params } = props;
     const { id } = params;
     let id_: number;
+    const apiClient = useApiClient();
+    const [issue, setIssue] = useState<Issue | null>(null);
 
     try {
         id_ = parseInt(id);
@@ -26,15 +32,22 @@ export default async (props: Params) => {
         notFound();
     }
 
-    const issue = await prisma.issue.findFirst({ where: { id: id_ } })
-
-    if (!issue) {
-        notFound();
+    const getIssue = async (issueId: number) => {
+        const res = await apiClient.get<{ success: boolean, result: Issue }>(apiRoutes.GET_ISSUE(issueId));
+        console.log("res.data.result", res.data.result);
+        setIssue(res.data.result);
     }
 
+    useEffect(() => {
+        getIssue(id_);
+    }, [id]);
+
+    if (!issue) {
+        return null;
+    }
 
     return (
-        <div>
+        <Container>
             <Box sx={{ fontWeight: "bold", fontSize: 30 }}>
                 {issue.title}
             </Box>
@@ -52,6 +65,6 @@ export default async (props: Params) => {
             <div>
                 <MarkdownComponent source={issue.description} />
             </div>
-        </div>
+        </Container>
     )
 }

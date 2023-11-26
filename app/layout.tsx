@@ -11,7 +11,8 @@ import Providers from './ReduxProviders';
 import { SessionProvider } from 'next-auth/react';
 import AuthProvider from './auth/Provider';
 import Spacer from '../component/Spacer';
-
+import MathjaxProvider from '../component/MathjaxProvider';
+import Head from 'next/head'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -31,24 +32,27 @@ export default function RootLayout({
   return (
 
     <html lang="en">
+      <Head>
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script >
+      </Head>
       <body style={{ height: "100vh", padding: 0, margin: 0 }}>
-        <AuthProvider>
-          <Providers>
-            <Box sx={{
-              "& .MuiButtonBase-root": {
-                textTransform: "none"
-              }
-            }}>
-              <NavBar />
-              <div style={{ height: "calc(100vh - 42px)" }}>
-                <Container>
+        <MathjaxProvider>
+          <AuthProvider>
+            <Providers>
+              <Box sx={{
+                "& .MuiButtonBase-root": {
+                  textTransform: "none"
+                }
+              }}>
+                <NavBar />
+                <div style={{ height: "calc(100vh - 42px)" }}>
                   <Spacer />
                   <div className={inter.variable}>{children}</div>
-                </Container>
-              </div>
-            </Box>
-          </Providers>
-        </AuthProvider>
+                </div>
+              </Box>
+            </Providers>
+          </AuthProvider>
+        </MathjaxProvider>
       </body>
     </html>
   )
