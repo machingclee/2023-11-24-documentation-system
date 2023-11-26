@@ -8,7 +8,7 @@
     "start:local": "env-cmd -f .env-cmdrc -e default,local next dev",
     "push": "env-cmd -f .env-cmdrc -e default,dev npx prisma db push",
     "migrate": "env-cmd -f .env-cmdrc -e default,local npx prisma migrate dev",
-    "build": "env-cmd -f .env-cmdrc -e default,dev next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
