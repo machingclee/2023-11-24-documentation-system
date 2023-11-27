@@ -3,18 +3,16 @@
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import { notFound } from "next/navigation";
-import Tag from "../Tag";
-import Button from '@mui/material-next/Button';
-import prisma from "../../../prisma/client";
 import MarkdownComponent from "../../../component/MarkdownPreviewComponent";
 import Spacer from "../../../component/Spacer";
 import dateUtil from "../../../util/dateUtil";
 import useApiClient from "../../../hooks/useApiClient";
 import { useEffect, useState } from "react";
 import apiRoutes from "../../../constants/apiRoutes";
-import { Article } from "@prisma/client";
+import { Article, MetaData } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import NextButton from "../../../component/NextButton";
+import matter from "gray-matter";
 
 type Params = {
     params: {
@@ -32,7 +30,8 @@ export default (props: Params) => {
         notFound();
     }
     const apiClient = useApiClient();
-    const [issue, setIssue] = useState<Article | null>(null);
+    const [article, setArticle] = useState<Article | null>(null);
+    const [metaData, setMetaData] = useState<MetaData | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -42,30 +41,35 @@ export default (props: Params) => {
     }
 
     const getIssue = async (issueId: number) => {
-        const res = await apiClient.get<{ success: boolean, result: Article }>(apiRoutes.GET_ISSUE(issueId));
-        console.log("res.data.result", res.data.result);
-        setIssue(res.data.result);
+        const res = await apiClient.get<{ success: boolean, result: Article & { Metadata: MetaData } }>(
+            apiRoutes.GET_ISSUE(issueId)
+        );
+        const article = res.data.result;
+        const mataData_ = article.Metadata;
+        setArticle(article);
+        setMetaData(mataData_);
     }
+
+    const { content, } = matter(article?.description || "");
+
 
     useEffect(() => {
         getIssue(id_);
     }, [id]);
 
-    if (!issue) {
+    if (!article) {
         return null;
     }
 
     return (
         <Container>
             <Box sx={{ fontWeight: "bold", fontSize: 30 }}>
-                {issue.title}
+                {article.title}
             </Box>
             <Spacer />
             <div style={{ display: "flex", alignItems: "center" }} >
-                <Tag status={issue.status} />
-                <Spacer />
                 <div>
-                    {dateUtil.transform(issue.createdAt)}
+                    {dateUtil.transform(article.createdAt)}
                 </div>
             </div>
             <Spacer />
@@ -79,7 +83,7 @@ export default (props: Params) => {
             </NextButton>
             <Spacer />
             <div>
-                <MarkdownComponent source={issue.description} />
+                <MarkdownComponent source={content} />
             </div>
         </Container>
     )

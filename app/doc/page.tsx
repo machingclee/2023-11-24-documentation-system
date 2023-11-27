@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import Container from "@mui/material/Container"
-import Tag from "./Tag"
 import dateUtil from "../../util/dateUtil";
 import Spacer from "../../component/Spacer";
 import CustomTable from "../../component/CustomTable";
@@ -39,12 +38,11 @@ const IssuePage = () => {
                 </div>
                 <Spacer />
                 <CustomTable
-                    headers={["Issue", "Status", "Created"]}
+                    headers={["Issue", "Created"]}
                     rows={issues}
                     keyExtractor={row => row.id.toString()}
                     rowMapping={r => [
                         <Link href={`/doc/${r.id}`}>{r.title}</Link>,
-                        <Tag status={r.status} />,
                         dateUtil.transform(r.createdAt)
                     ]}
                 />

@@ -17,8 +17,20 @@ export const GET = async (req: NextRequest, params: Params) => {
                 { id: id, },
                 { email: userEmail }
             ]
+        },
+        include: {
+            MetaData: {
+                select: {
+                    author: true,
+                    classification: true
+                }
+            }
         }
     });
+
+    if (!article) {
+        return NextResponse.json({ success: false, errorMessage: "no result" }, { status: 200 })
+    }
 
     return NextResponse.json({ success: true, result: article }, { status: 200 })
 }
