@@ -14,7 +14,7 @@ import NextButton from "../../component/NextButton";
 
 const IssuePage = () => {
     const apiClient = useApiClient();
-    const [issues, setIssues] = useState<Article[]>([]);
+    const [issues, setIssues] = useState<GetIssuesResponse["result"]>([]);
     const [isLoading, setIsloading] = useState(false);
     const getIssues = async () => {
         const res = await apiClient.get<GetIssuesResponse>(apiRoutes.GET_ISSUES)
@@ -38,11 +38,13 @@ const IssuePage = () => {
                 </div>
                 <Spacer />
                 <CustomTable
-                    headers={["Issue", "Created"]}
+                    headers={["Issue", "Author", "Classification", "Created"]}
                     rows={issues}
                     keyExtractor={row => row.id.toString()}
                     rowMapping={r => [
                         <Link href={`/doc/${r.id}`}>{r.title}</Link>,
+                        <>{r.MetaData.author}</>,
+                        <>{r.MetaData.classification}</>,
                         dateUtil.transform(r.createdAt)
                     ]}
                 />

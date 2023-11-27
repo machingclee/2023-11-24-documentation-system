@@ -17,14 +17,22 @@ export type CreateIssueSchema = z.infer<typeof createIssueSchema>
 
 export type GetIssuesResponse = {
     success: boolean,
-    result: Article[];
+    result: (Article & { MetaData: { author: string, classification: string } })[];
 }
 
 export const GET = async (req: NextRequest) => {
     const userEmail = requestUtil.getUseremail(req);
     const article = await prisma.article.findMany({
         where: { email: userEmail },
-        orderBy: { createdAt: "desc" }
+        orderBy: { createdAt: "desc" },
+        include: {
+            MetaData: {
+                select: {
+                    author: true,
+                    classification: true
+                }
+            }
+        }
     });
 
     console.log("[userEmail]", userEmail);

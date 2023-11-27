@@ -8,6 +8,7 @@ export default (props: { children: ReactNode, isLoading?: boolean } & ButtonProp
     const { classes, cx } = useButtonStyles({ disabled: isLoading || false });
     return (
         <Button
+            style={{ backgroundColor: "rgb(78, 83, 70)" }}
             onClick={onClick}
             {..._props}
             className={cx(className, classes.disabled)}
