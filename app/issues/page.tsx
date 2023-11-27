@@ -10,12 +10,12 @@ import CustomTable from "../../component/CustomTable";
 import useApiClient from "../../hooks/useApiClient";
 import apiRoutes from "../../constants/apiRoutes";
 import { GetIssuesResponse } from "../api/issues/route";
-import { Issue } from "@prisma/client";
+import { Article } from "@prisma/client";
 import NextButton from "../../component/NextButton";
 
 const IssuePage = () => {
     const apiClient = useApiClient();
-    const [issues, setIssues] = useState<Issue[]>([]);
+    const [issues, setIssues] = useState<Article[]>([]);
     const [isLoading, setIsloading] = useState(false);
     const getIssues = async () => {
         const res = await apiClient.get<GetIssuesResponse>(apiRoutes.GET_ISSUES)
