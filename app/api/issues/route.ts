@@ -8,8 +8,12 @@ import { request } from "http";
 
 const createIssueSchema = z.object({
     title: z.string().min(1, "Title must have at least one character").max(255),
-    description: z.string().min(1, "Description cannot be empty.")
+    description: z.string().min(1, "Description cannot be empty."),
+    author: z.string().min(1).max(100),
+    classification: z.string().min(1).max(100),
 })
+
+export type CreateIssueSchema = z.infer<typeof createIssueSchema>
 
 export type GetIssuesResponse = {
     success: boolean,
@@ -41,14 +45,24 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.json(validation.error.errors, { status: 400 })
     }
     const body = validation.data;
+    const { author, description, title, classification } = body;
 
     const article = await prisma.article.create({
         data: {
             email: userEmail,
-            title: body.title,
-            description: body.description
+            title: title,
+            description: description
         }
     })
+
+    const metaData = await prisma.metaData.create({
+        data: {
+            articleid: article.id,
+            author: author,
+            classification: classification
+        }
+    })
+
 
     return NextResponse.json(article, { status: 201 })
 }

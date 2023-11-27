@@ -1,6 +1,6 @@
 "use client";
 import matter from 'gray-matter';
-import { Container, TextField, Alert, Box } from "@mui/material";
+import { Container, TextField, Alert, Box, Typography } from "@mui/material";
 import { debounce } from "lodash";
 import { useRouter } from "next/navigation";
 import "easymde/dist/easymde.min.css";
@@ -18,6 +18,8 @@ import useRerender from "../hooks/useRerender";
 import useHydrated from "../hooks/useHydrated";
 import { EditIssueSchema } from "../app/api/issues/[id]/route";
 import boxShadow from "../constants/boxShadow";
+import { useAppSelector } from '../redux/app/hooks';
+import { CreateIssueSchema } from '../app/api/issues/route';
 
 type IssueForm = {
     title: string;
@@ -30,15 +32,14 @@ type ErrorResponse = {
 
 type MetaData = {
     author: string,
-    topic: string
-    subtopic: string
+    classification: string
 }
 
 const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string }) => {
     const form = useRef<IssueForm>({ description: "", title: "" });
     const [desc, setDesc] = useState("");
     const { content, data } = matter(desc);
-
+    const data_ = data as MetaData;
     const apiClient = useApiClient();
     const [loading, setLoading] = useState(false);
     const { rerender, Rerender, rerenderFlag } = useRerender();
@@ -55,17 +56,27 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
         const reqBody: EditIssueSchema = {
             id: parseInt(id || "-1"),
             title,
-            description
+            description,
+            author: data_.author || "",
+            classification: data_.classification || "",
         }
         setLoading(true);
-        await apiClient.post<{ success: boolean }>(apiRoutes.POST_ISSUE(parseInt(id || "-1")), reqBody);
+        await apiClient.put<{ success: boolean }>(apiRoutes.PUT_ISSUE(parseInt(id || "-1")), reqBody);
         router.push(`/issues/${id}`)
     }
 
     const submitCreate = async () => {
+        const { description, title } = form.current;
+        const { author = "", classification = "" } = data_
+        const createArticleParams: CreateIssueSchema = {
+            title,
+            description,
+            author,
+            classification
+        }
         try {
             setLoading(true);
-            await apiClient.post("/api/issues", form.current);
+            await apiClient.post(apiRoutes.POST_ISSUE, createArticleParams);
             router.push("/issues");
         } catch (error: any) {
             const errRes = error?.response?.data as ErrorResponse | undefined;
@@ -134,6 +145,7 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
         const { description, title } = result;
         setDesc(description);
         form.current.title = title;
+        form.current.description = description;
         rerender();
     }
 
@@ -151,22 +163,27 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
         <>
             <Container>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <Rerender>
-                        <TextField
-                            sx={{
-                                width: "400px",
-                                "& fieldset": {
-                                    borderRadius: 2
-                                },
-                            }}
-                            defaultValue={form.current.title}
-                            size='small'
-                            placeholder="Title"
-                            onChange={(e) => {
-                                const title = e.target.value;
-                                fieldUpdate({ title })
-                            }}
-                        />
+                    <Rerender >
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <div style={{ fontWeight: 500 }}>Title</div>
+                            <Spacer />
+                            <TextField
+                                style={{ backgroundColor: "white", overflow: "hidden" }}
+                                sx={{
+                                    width: "400px",
+                                    "& fieldset": {
+                                        borderRadius: 0
+                                    },
+                                }}
+                                defaultValue={form.current.title}
+                                size='small'
+                                placeholder="Title"
+                                onChange={(e) => {
+                                    const title = e.target.value;
+                                    fieldUpdate({ title })
+                                }}
+                            />
+                        </div>
                     </Rerender>
                     {type === "create" && <NextButton
                         isLoading={loading}
@@ -212,6 +229,7 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
                     </Box>
                     <Spacer />
                     <Box style={{
+                        backgroundColor: "white",
                         flex: 1,
                         borderRadius: 10,
                         padding: "0px 20px",

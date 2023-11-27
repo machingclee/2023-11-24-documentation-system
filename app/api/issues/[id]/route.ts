@@ -26,13 +26,15 @@ export const GET = async (req: NextRequest, params: Params) => {
 const editIssueSchema = z.object({
     id: z.number().gte(0),
     title: z.string().min(1, "Title must have at least one character").max(255),
-    description: z.string().min(1, "Description cannot be empty.")
+    description: z.string().min(1, "Description cannot be empty."),
+    author: z.string().min(1).max(100),
+    classification: z.string().min(0).max(100),
 })
 
 export type EditIssueSchema = z.infer<typeof editIssueSchema>;
 
 
-export const POST = async (req: NextRequest, params: Params) => {
+export const PUT = async (req: NextRequest, params: Params) => {
     const body_ = await req.json();
     const validation = editIssueSchema.safeParse(body_);
 

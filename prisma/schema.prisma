@@ -23,14 +23,13 @@ model Article {
 }
 
 model MetaData {
-  id        Int      @id @default(autoincrement())
-  author    String   @db.VarChar(100)
-  topic     String   @db.VarChar(100)
-  subTopic  String   @db.VarChar(100)
-  articleid Int      @unique
-  article   Article  @relation(fields: [articleid], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  author         String   @db.VarChar(100)
+  classification String   @map("classfication") @db.VarChar(100)
+  articleid      Int      @unique
+  article        Article  @relation(fields: [articleid], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 enum Status {
