@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `MetaData` MODIFY `author` VARCHAR(100) NOT NULL,
+    MODIFY `topic` VARCHAR(100) NOT NULL,
+    MODIFY `subTopic` VARCHAR(100) NOT NULL;

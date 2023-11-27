@@ -12,23 +12,25 @@ datasource db {
 }
 
 model Article {
-  id          Int        @id @default(autoincrement())
-  email       String?    @db.Text
-  title       String     @db.VarChar(255)
-  description String     @db.Text
-  status      Status     @default(OPEN)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  MetaData    MetaData[]
+  id          Int       @id @default(autoincrement())
+  email       String?   @db.Text
+  title       String    @db.VarChar(255)
+  description String    @db.Text
+  status      Status    @default(OPEN)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  MetaData    MetaData?
 }
 
 model MetaData {
-  id        Int     @id @default(autoincrement())
-  author    String  @db.Text
-  topic     String  @db.Text
-  subTopic  String  @db.Text
-  articleid Int
-  article   Article @relation(fields: [articleid], references: [id])
+  id        Int      @id @default(autoincrement())
+  author    String   @db.VarChar(100)
+  topic     String   @db.VarChar(100)
+  subTopic  String   @db.VarChar(100)
+  articleid Int      @unique
+  article   Article  @relation(fields: [articleid], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Status {

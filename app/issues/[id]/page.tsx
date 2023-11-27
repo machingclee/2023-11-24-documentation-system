@@ -12,7 +12,7 @@ import dateUtil from "../../../util/dateUtil";
 import useApiClient from "../../../hooks/useApiClient";
 import { useEffect, useState } from "react";
 import apiRoutes from "../../../constants/apiRoutes";
-import { Issue } from "@prisma/client";
+import { Article } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import NextButton from "../../../component/NextButton";
 
@@ -32,7 +32,7 @@ export default (props: Params) => {
         notFound();
     }
     const apiClient = useApiClient();
-    const [issue, setIssue] = useState<Issue | null>(null);
+    const [issue, setIssue] = useState<Article | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -42,7 +42,7 @@ export default (props: Params) => {
     }
 
     const getIssue = async (issueId: number) => {
-        const res = await apiClient.get<{ success: boolean, result: Issue }>(apiRoutes.GET_ISSUE(issueId));
+        const res = await apiClient.get<{ success: boolean, result: Article }>(apiRoutes.GET_ISSUE(issueId));
         console.log("res.data.result", res.data.result);
         setIssue(res.data.result);
     }
