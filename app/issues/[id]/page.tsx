@@ -1,17 +1,20 @@
 "use client";
 
-import { Box, Container } from "@mui/material";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
 import { notFound } from "next/navigation";
 import Tag from "../Tag";
 import Button from '@mui/material-next/Button';
 import prisma from "../../../prisma/client";
-import MarkdownComponent from "../../../component/MarkdownComponent";
+import MarkdownComponent from "../../../component/MarkdownPreviewComponent";
 import Spacer from "../../../component/Spacer";
 import dateUtil from "../../../util/dateUtil";
 import useApiClient from "../../../hooks/useApiClient";
 import { useEffect, useState } from "react";
 import apiRoutes from "../../../constants/apiRoutes";
 import { Issue } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import NextButton from "../../../component/NextButton";
 
 type Params = {
     params: {
@@ -23,13 +26,19 @@ export default (props: Params) => {
     const { params } = props;
     const { id } = params;
     let id_: number;
-    const apiClient = useApiClient();
-    const [issue, setIssue] = useState<Issue | null>(null);
-
     try {
         id_ = parseInt(id);
     } catch (err) {
         notFound();
+    }
+    const apiClient = useApiClient();
+    const [issue, setIssue] = useState<Issue | null>(null);
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
+    const startEdit = () => {
+        setLoading(true);
+        router.push(`/issues/${id}/edit`)
     }
 
     const getIssue = async (issueId: number) => {
@@ -60,7 +69,14 @@ export default (props: Params) => {
                 </div>
             </div>
             <Spacer />
-            <Button variant="filled" size="medium">Edit</Button>
+            <NextButton
+                variant="filled"
+                size="medium"
+                onClick={startEdit}
+                isLoading={loading}
+            >
+                Edit
+            </NextButton>
             <Spacer />
             <div>
                 <MarkdownComponent source={issue.description} />

@@ -2,11 +2,12 @@ import Markdown from "react-markdown";
 import gfm from "remark-gfm";
 import remarkMath from 'remark-math';
 import rehypeRaw from 'rehype-raw';
-import { HTMLAttributes, ReactNode } from "react";
+import { CSSProperties, HTMLAttributes, ReactNode } from "react";
 import { tss } from "tss-react/mui";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism as highlighterStyle } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import _ from "lodash";
+import { Box } from "@mui/material";
 
 const useStyles = tss.create((() => ({
     example: {
@@ -87,13 +88,15 @@ const components = {
 
 const MarkdownComponent = ({ source }: { source: string }) => {
     return (
-        <Markdown
-            // @ts-ignore
-            components={components}
-            remarkPlugins={[gfm, remarkMath]}
-            rehypePlugins={[rehypeRaw]}
-            children={source}
-        />
+        <Box>
+            <Markdown
+                // @ts-ignore
+                components={components}
+                remarkPlugins={[gfm, remarkMath]}
+                rehypePlugins={[rehypeRaw]}
+                children={source}
+            />
+        </Box>
     )
 }
 

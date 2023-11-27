@@ -52,5 +52,3 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json(newIssue, { status: 201 })
 }
-
-export const dynamic = "force-dynamic"

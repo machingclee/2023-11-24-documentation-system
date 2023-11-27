@@ -1,6 +1,10 @@
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from "@mui/material";
-import dayjs from "dayjs";
-import Link from "next/link";
+import TableContainer from "@mui/material/TableContainer"
+import Paper from "@mui/material/Paper"
+import Table from "@mui/material/Table"
+import TableHead from "@mui/material/TableHead"
+import TableRow from "@mui/material/TableRow"
+import TableCell from "@mui/material/TableCell"
+import TableBody from "@mui/material/TableBody"
 import { ReactNode } from "react";
 
 export default <T,>({

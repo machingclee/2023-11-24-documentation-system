@@ -1,4 +1,4 @@
-import { CircularProgress } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import Button, { ButtonProps } from '@mui/material-next/Button';
 import { PropsWithChildren, ReactNode } from 'react';
 import { useButtonStyles } from '../styles/styleHooks';

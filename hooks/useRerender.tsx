@@ -1,4 +1,6 @@
-import { ReactNode, useState } from "react"
+"use client"
+
+import { ReactNode, useMemo, useState } from "react"
 
 export default () => {
     const [rerenderFlag, setRerenderFlag] = useState(true);
@@ -7,9 +9,10 @@ export default () => {
         setTimeout(() => setRerenderFlag(true), 1);
     }
 
-    const Rerender = ({ children }: { children: ReactNode }) => {
+    const Rerender = useMemo(() => ({ children }: { children: ReactNode }) => {
+        "use client";
         return <>{rerenderFlag && children}</>
-    }
+    }, [rerenderFlag])
 
-    return { rerender, Rerender }
+    return { rerender, Rerender, rerenderFlag }
 }

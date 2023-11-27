@@ -16,15 +16,24 @@ const oAuth2Client = new google.auth.OAuth2(
     }
 );
 
+const oauthURl: { current: string } = { current: "" };
+
 const getAuthUrl = () => {
-    return oAuth2Client.generateAuthUrl({
-        access_type: "offline",
-        prompt: "consent",
-        scope: [
-            "https://www.googleapis.com/auth/userinfo.email",
-            "https://www.googleapis.com/auth/userinfo.profile"
-        ]
-    });
+    if (oauthURl.current) {
+        return oauthURl.current;
+    }
+    else {
+        const url = oAuth2Client.generateAuthUrl({
+            access_type: "offline",
+            prompt: "consent",
+            scope: [
+                "https://www.googleapis.com/auth/userinfo.email",
+                "https://www.googleapis.com/auth/userinfo.profile"
+            ]
+        });
+        oauthURl.current = url;
+        return url;
+    }
 }
 
 const getRedirectOAuthLoginPage = async () => {

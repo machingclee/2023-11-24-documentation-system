@@ -2,20 +2,15 @@
 
 import React, { useEffect, useState } from "react"
 import Link from "next/link"
-import Button from "@mui/material/Button"
-import dayjs from "dayjs"
-import { Badge, Container } from "@mui/material"
+import Container from "@mui/material/Container"
 import Tag from "./Tag"
-import { useSession } from "next-auth/react"
 import dateUtil from "../../util/dateUtil";
 import Spacer from "../../component/Spacer";
 import CustomTable from "../../component/CustomTable";
-import prisma from "../../prisma/client";
 import useApiClient from "../../hooks/useApiClient";
 import apiRoutes from "../../constants/apiRoutes";
 import { GetIssuesResponse } from "../api/issues/route";
 import { Issue } from "@prisma/client";
-import useHydrated from "../../hooks/useHydrated";
 import NextButton from "../../component/NextButton";
 
 const IssuePage = () => {

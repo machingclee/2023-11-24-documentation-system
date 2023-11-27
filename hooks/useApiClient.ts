@@ -6,17 +6,19 @@ import authSlice from "../redux/slices/authSlice";
 import useLoginStatus from "./useLoginStatus";
 import useLogout from "./useLogout";
 
-const apiClient = axios.create({
-    baseURL: "/",
-    responseEncoding: "utf8",
-    headers: {
-        'Content-type': 'application/json',
-    },
-})
 
-apiClient.defaults.withCredentials = true;
 
 export default () => {
+    const apiClient = axios.create({
+        baseURL: "/",
+        responseEncoding: "utf8",
+        headers: {
+            'Content-type': 'application/json',
+        },
+    })
+
+    apiClient.defaults.withCredentials = true;
+
     const { accessToken, userDetail } = useLoginStatus();
     const logout = useLogout();
     configApiClient(apiClient, accessToken, logout, userDetail?.email || "");

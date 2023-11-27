@@ -6,9 +6,8 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import NavBar from './NavBar';
-import { Box, Container } from '@mui/material';
+import Box from '@mui/material/Box';
 import Providers from './ReduxProviders';
-import { SessionProvider } from 'next-auth/react';
 import AuthProvider from './auth/Provider';
 import Spacer from '../component/Spacer';
 import MathjaxProvider from '../component/MathjaxProvider';
@@ -40,12 +39,13 @@ export default function RootLayout({
           <AuthProvider>
             <Providers>
               <Box sx={{
+
                 "& .MuiButtonBase-root": {
                   textTransform: "none"
                 }
               }}>
                 <NavBar />
-                <div style={{ height: "calc(100vh - 42px)" }}>
+                <div style={{ height: "calc(100vh - 43px)", backgroundColor: "#f3f3eb" }}>
                   <Spacer />
                   <div className={inter.variable}>{children}</div>
                 </div>

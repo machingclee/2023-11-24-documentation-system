@@ -33,6 +33,7 @@
     "easymde": "^2.18.0",
     "env-cmd": "^10.1.0",
     "googleapis": "^128.0.0",
+    "gray-matter": "^4.0.3",
     "imgur": "^2.3.0",
     "immer": "^10.0.3",
     "jose": "^5.1.1",

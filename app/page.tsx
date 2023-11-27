@@ -1,7 +1,4 @@
-import Image from 'next/image'
-import styles from './page.module.css'
-import useLoginStatus from '../hooks/useLoginStatus'
-import { Container } from '@mui/material'
+import Container from '@mui/material/Container'
 
 export default function Home() {
     return (

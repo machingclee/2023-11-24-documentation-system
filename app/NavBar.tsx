@@ -1,17 +1,17 @@
 "use client";
-import { Button, Container } from "@mui/material";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
 import { tss } from "tss-react/mui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react"
-import { useSession } from "next-auth/react"
 import Spacer from "../component/Spacer";
 import { useAppDispatch, useAppSelector } from "../redux/app/hooks";
-import authSlice from "../redux/slices/authSlice";
 import useLoginStatus from "../hooks/useLoginStatus";
 import useLogout from "../hooks/useLogout";
 import CircularProgress from '@mui/material/CircularProgress';
 import { useButtonStyles } from "../styles/styleHooks";
+import { Box } from "@mui/material";
 
 const NavBar = () => {
     const currentPath = usePathname();
@@ -27,21 +27,34 @@ const NavBar = () => {
     const logout = useLogout();
 
     return (
-        <div style={{
-            height: 42,
-            display: "flex",
-            alignItems: "center",
-            paddingLeft: 10,
-            paddingRight: 10,
-            borderBottom: "1px solid rgba(0,0,0,0.1)"
-        }}
+        <Box
+            sx={{
+                "& button, & span": {
+                    color: "white"
+                }
+            }}
+            style={{
+                height: 42,
+                display: "flex",
+                alignItems: "center",
+                paddingLeft: 10,
+                paddingRight: 10,
+                borderBottom: "1px solid rgba(0,0,0,0.1)",
+                backgroundColor: "#4e5346"
+            }}
         >
             <Container style={{ display: "flex", justifyContent: "space-between" }}>
                 <div style={{ display: "flex" }}>
 
                     {links.map(link => {
                         const { href, label } = link;
-                        const isClicked = currentPath === href;
+                        const isClicked = (() => {
+                            if (href === "/") {
+                                return href === currentPath;
+                            } else {
+                                return new RegExp(href).test(currentPath);
+                            }
+                        })()
                         return (
                             <React.Fragment key={href}>
                                 <Link
@@ -79,7 +92,7 @@ const NavBar = () => {
                     <Button onClick={logout}>Logout</Button>
                 </div>}
             </Container>
-        </div >
+        </Box >
     )
 }
 
