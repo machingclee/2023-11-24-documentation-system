@@ -17,7 +17,7 @@ const NavBar = () => {
     const currentPath = usePathname();
     const links = [
         { label: "Dashboard", href: "/" },
-        { label: "Issues", href: "/issues" }
+        { label: "Documentations", href: "/doc" }
     ]
     const dispatch = useAppDispatch();
     const { accessToken, userDetail } = useLoginStatus();

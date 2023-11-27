@@ -38,7 +38,7 @@ export default (props: Params) => {
 
     const startEdit = () => {
         setLoading(true);
-        router.push(`/issues/${id}/edit`)
+        router.push(`/doc/${id}/edit`)
     }
 
     const getIssue = async (issueId: number) => {

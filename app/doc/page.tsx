@@ -9,7 +9,7 @@ import Spacer from "../../component/Spacer";
 import CustomTable from "../../component/CustomTable";
 import useApiClient from "../../hooks/useApiClient";
 import apiRoutes from "../../constants/apiRoutes";
-import { GetIssuesResponse } from "../api/issues/route";
+import { GetIssuesResponse } from "../api/doc/route";
 import { Article } from "@prisma/client";
 import NextButton from "../../component/NextButton";
 
@@ -33,7 +33,7 @@ const IssuePage = () => {
         <Container>
             <div>
                 <div>
-                    <Link href={"/issues/new"} onClick={() => setIsloading(true)}>
+                    <Link href={"/doc/new"} onClick={() => setIsloading(true)}>
                         <NextButton variant="filled" isLoading={isLoading}  >New Issue</NextButton>
                     </Link>
                 </div>
@@ -43,7 +43,7 @@ const IssuePage = () => {
                     rows={issues}
                     keyExtractor={row => row.id.toString()}
                     rowMapping={r => [
-                        <Link href={`/issues/${r.id}`}>{r.title}</Link>,
+                        <Link href={`/doc/${r.id}`}>{r.title}</Link>,
                         <Tag status={r.status} />,
                         dateUtil.transform(r.createdAt)
                     ]}

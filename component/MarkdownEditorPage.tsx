@@ -5,7 +5,7 @@ import { debounce } from "lodash";
 import { useRouter } from "next/navigation";
 import "easymde/dist/easymde.min.css";
 import { useRef, useState, useMemo, ClipboardEvent, useEffect, useCallback } from "react";
-import { UploadImageResponse } from "../app/api/issues/upload-image/route";
+import { UploadImageResponse } from "../app/api/doc/upload-image/route";
 import useApiClient from "../hooks/useApiClient";
 import useGetFieldUpdates from "../hooks/useGetFieldUpdates";
 import useMDE, { Position } from "../hooks/useMDE";
@@ -16,10 +16,10 @@ import apiRoutes from "../constants/apiRoutes";
 import { Article } from "@prisma/client";
 import useRerender from "../hooks/useRerender";
 import useHydrated from "../hooks/useHydrated";
-import { EditIssueSchema } from "../app/api/issues/[id]/route";
+import { EditIssueSchema } from "../app/api/doc/[id]/route";
 import boxShadow from "../constants/boxShadow";
 import { useAppSelector } from '../redux/app/hooks';
-import { CreateIssueSchema } from '../app/api/issues/route';
+import { CreateIssueSchema } from '../app/api/doc/route';
 
 type IssueForm = {
     title: string;
@@ -62,7 +62,7 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
         }
         setLoading(true);
         await apiClient.put<{ success: boolean }>(apiRoutes.PUT_ISSUE(parseInt(id || "-1")), reqBody);
-        router.push(`/issues/${id}`)
+        router.push(`/doc/${id}`)
     }
 
     const submitCreate = async () => {
@@ -77,7 +77,7 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
         try {
             setLoading(true);
             await apiClient.post(apiRoutes.POST_ISSUE, createArticleParams);
-            router.push("/issues");
+            router.push("/doc");
         } catch (error: any) {
             const errRes = error?.response?.data as ErrorResponse | undefined;
             if (errRes) {
@@ -105,7 +105,7 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
                 setMDEText(pos, pos, loadingMessage)
             }
             const res = await apiClient.post<{ success: boolean, result: UploadImageResponse }>(
-                "/api/issues/upload-image",
+                "/api/doc/upload-image",
                 formData,
                 {
                     headers: {
