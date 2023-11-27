@@ -11,7 +11,7 @@ type Params = {
 export const GET = async (req: NextRequest, params: Params) => {
     const userEmail = requestUtil.getUseremail(req);
     const id = parseInt(params.params.id);
-    const issue = await prisma.issue.findFirst({
+    const article = await prisma.article.findFirst({
         where: {
             AND: [
                 { id: id, },
@@ -20,7 +20,7 @@ export const GET = async (req: NextRequest, params: Params) => {
         }
     });
 
-    return NextResponse.json({ success: true, result: issue }, { status: 200 })
+    return NextResponse.json({ success: true, result: article }, { status: 200 })
 }
 
 const editIssueSchema = z.object({
@@ -38,14 +38,14 @@ export const POST = async (req: NextRequest, params: Params) => {
 
     if (validation.success) {
         const { description, id, title } = validation.data;
-        const article = await prisma.issue.findFirst({ where: { id } })
+        const article = await prisma.article.findFirst({ where: { id } })
         const userEmail = requestUtil.getUseremail(req);
 
         if (article?.email !== userEmail) {
             return res.json({ success: false, errorMessage: "user email not match" });
         }
 
-        await prisma.issue.update({
+        await prisma.article.update({
             data: {
                 title,
                 description

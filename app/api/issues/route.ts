@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import res from "../../../util/res";
 import prisma from "../../../prisma/client";
-import { Issue } from "@prisma/client";
+import { Article } from "@prisma/client";
 import requestUtil from "../../../util/requestUtil";
 import { request } from "http";
 
@@ -13,22 +13,22 @@ const createIssueSchema = z.object({
 
 export type GetIssuesResponse = {
     success: boolean,
-    result: Issue[];
+    result: Article[];
 }
 
 export const GET = async (req: NextRequest) => {
     const userEmail = requestUtil.getUseremail(req);
-    const issues = await prisma.issue.findMany({
+    const article = await prisma.article.findMany({
         where: { email: userEmail },
         orderBy: { createdAt: "desc" }
     });
 
     console.log("[userEmail]", userEmail);
-    console.log("[issues]", issues);
+    console.log("[issues]", article);
 
     return res.json({
         success: true,
-        result: issues
+        result: article
     });
 }
 
@@ -42,7 +42,7 @@ export const POST = async (req: NextRequest) => {
     }
     const body = validation.data;
 
-    const newIssue = await prisma.issue.create({
+    const article = await prisma.article.create({
         data: {
             email: userEmail,
             title: body.title,
@@ -50,5 +50,5 @@ export const POST = async (req: NextRequest) => {
         }
     })
 
-    return NextResponse.json(newIssue, { status: 201 })
+    return NextResponse.json(article, { status: 201 })
 }

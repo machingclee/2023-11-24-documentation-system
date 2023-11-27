@@ -13,7 +13,7 @@ import MarkdownPreviewComponent from "./MarkdownPreviewComponent";
 import NextButton from "./NextButton";
 import Spacer from "./Spacer";
 import apiRoutes from "../constants/apiRoutes";
-import { Issue } from "@prisma/client";
+import { Article } from "@prisma/client";
 import useRerender from "../hooks/useRerender";
 import useHydrated from "../hooks/useHydrated";
 import { EditIssueSchema } from "../app/api/issues/[id]/route";
@@ -129,7 +129,7 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
     }, [rerenderFlag])
 
     const initIssue = async (id: string | undefined) => {
-        const res = await apiClient.get<{ success: boolean, result: Issue }>(apiRoutes.GET_ISSUE(parseInt(id || "-1")));
+        const res = await apiClient.get<{ success: boolean, result: Article }>(apiRoutes.GET_ISSUE(parseInt(id || "-1")));
         const { result } = res.data;
         const { description, title } = result;
         setDesc(description);
