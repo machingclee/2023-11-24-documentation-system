@@ -1,32 +1,43 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-generator client {
-  provider = "prisma-client-js"
+datasource db {
+    provider = "postgresql"
+    url      = env("DB_URL")
 }
 
-datasource db {
-  provider     = "mysql"
-  url          = env("DB_URL")
-  relationMode = "prisma"
+generator client {
+    provider = "prisma-client-js"
+}
+
+generator kysely {
+    provider = "prisma-kysely"
+
+    // Optionally provide a destination directory for the generated file
+    // and a filename of your choice
+    output       = "../db"
+    fileName     = "types.ts"
+    // Optionally generate runtime enums to a separate file
+    enumFileName = "enums.ts"
 }
 
 model Article {
-  id          Int       @id @default(autoincrement())
-  email       String?   @db.Text
-  title       String    @db.VarChar(255)
-  description String    @db.Text
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  MetaData    MetaData?
+    id          Int       @id @default(autoincrement())
+    email       String?   @db.Text
+    title       String    @db.VarChar(255)
+    description String    @db.Text
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    MetaData    MetaData?
+
+    @@index([id])
 }
 
 model MetaData {
-  id             Int      @id @default(autoincrement())
-  author         String   @db.VarChar(100)
-  classification String   @map("classfication") @db.VarChar(100)
-  articleid      Int      @unique
-  article        Article  @relation(fields: [articleid], references: [id])
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+    id             Int      @id @default(autoincrement())
+    author         String   @db.VarChar(100)
+    classification String   @map("classfication") @db.VarChar(100)
+    articleid      Int      @unique
+    article        Article  @relation(fields: [articleid], references: [id])
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+
+    @@index([articleid])
 }
