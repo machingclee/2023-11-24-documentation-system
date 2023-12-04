@@ -22,7 +22,7 @@ export const POST = async (req: NextRequest) => {
             image: buffer,
             type: 'stream',
         });
-        const { data, headers, status, success } = res;
+        const { data } = res;
         console.log(data);
         return NextResponse.json({
             success: true,

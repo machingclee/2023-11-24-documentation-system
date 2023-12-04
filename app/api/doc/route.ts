@@ -5,42 +5,37 @@ import prisma from "../../../prisma/client";
 import { Article } from "@prisma/client";
 import requestUtil from "../../../util/requestUtil";
 import { request } from "http";
+import { db } from "../../../db/database";
 
 const createIssueSchema = z.object({
     title: z.string().min(1, "Title must have at least one character").max(255),
     description: z.string().min(1, "Description cannot be empty."),
-    author: z.string().min(1).max(100),
-    classification: z.string().min(1).max(100),
+    author: z.string().max(100),
+    classification: z.string().max(100),
 })
 
 export type CreateIssueSchema = z.infer<typeof createIssueSchema>
 
 export type GetIssuesResponse = {
     success: boolean,
-    result: (Article & { MetaData: { author: string, classification: string } })[];
+    result: (Article & { author: string, classification: string })[];
 }
 
 export const GET = async (req: NextRequest) => {
     const userEmail = requestUtil.getUseremail(req);
-    const article = await prisma.article.findMany({
-        where: { email: userEmail },
-        orderBy: { createdAt: "desc" },
-        include: {
-            MetaData: {
-                select: {
-                    author: true,
-                    classification: true
-                }
-            }
-        }
-    });
+    const articles = await db.selectFrom("Article")
+        .selectAll()
+        .leftJoin("MetaData", "MetaData.articleid", "Article.id")
+        .select(["MetaData.author", "MetaData.classfication"])
+        .where("Article.email", "=", userEmail)
+        .execute();
 
     console.log("[userEmail]", userEmail);
-    console.log("[issues]", article);
+    console.log("[articles]", articles);
 
     return res.json({
         success: true,
-        result: article
+        result: articles
     });
 }
 
@@ -55,22 +50,19 @@ export const POST = async (req: NextRequest) => {
     const body = validation.data;
     const { author, description, title, classification } = body;
 
-    const article = await prisma.article.create({
-        data: {
-            email: userEmail,
-            title: title,
-            description: description
-        }
-    })
+    const article = await db.insertInto("Article").values({
+        description,
+        title,
+        email: userEmail,
+        updatedAt: new Date()
+    }).returning("Article.id").executeTakeFirst()
 
-    const metaData = await prisma.metaData.create({
-        data: {
-            articleid: article.id,
-            author: author,
-            classification: classification
-        }
-    })
-
+    await db.insertInto("MetaData").values({
+        articleid: article?.id || 0,
+        author: author,
+        updatedAt: new Date(),
+        classfication: classification
+    }).execute();
 
     return NextResponse.json(article, { status: 201 })
 }

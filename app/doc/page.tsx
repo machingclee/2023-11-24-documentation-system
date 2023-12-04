@@ -43,8 +43,8 @@ const IssuePage = () => {
                     keyExtractor={row => row.id.toString()}
                     rowMapping={r => [
                         <Link href={`/doc/${r.id}`}>{r.title}</Link>,
-                        <>{r.MetaData.author}</>,
-                        <>{r.MetaData.classification}</>,
+                        <>{r.author}</>,
+                        <>{r.classification}</>,
                         dateUtil.transform(r.createdAt)
                     ]}
                 />

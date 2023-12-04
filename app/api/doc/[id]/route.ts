@@ -3,6 +3,7 @@ import prisma from "../../../../prisma/client";
 import requestUtil from "../../../../util/requestUtil";
 import { z } from "zod";
 import res from "../../../../util/res";
+import { db } from "../../../../db/database";
 
 type Params = {
     params: { id: string }
@@ -11,22 +12,12 @@ type Params = {
 export const GET = async (req: NextRequest, params: Params) => {
     const userEmail = requestUtil.getUseremail(req);
     const id = parseInt(params.params.id);
-    const article = await prisma.article.findFirst({
-        where: {
-            AND: [
-                { id: id, },
-                { email: userEmail }
-            ]
-        },
-        include: {
-            MetaData: {
-                select: {
-                    author: true,
-                    classification: true
-                }
-            }
-        }
-    });
+    const article = await db.selectFrom("Article")
+        .selectAll("Article")
+        .leftJoin("MetaData", "MetaData.articleid", "Article.id")
+        .where("Article.id", "=", id)
+        .select(["MetaData.author", "MetaData.classfication"])
+        .executeTakeFirst();
 
     if (!article) {
         return NextResponse.json({ success: false, errorMessage: "no result" }, { status: 200 })
@@ -52,22 +43,19 @@ export const PUT = async (req: NextRequest, params: Params) => {
 
     if (validation.success) {
         const { description, id, title } = validation.data;
-        const article = await prisma.article.findFirst({ where: { id } })
+        const article = await db.selectFrom("Article")
+            .selectAll()
+            .where("Article.id", "=", id).executeTakeFirst();
         const userEmail = requestUtil.getUseremail(req);
 
         if (article?.email !== userEmail) {
             return res.json({ success: false, errorMessage: "user email not match" });
         }
 
-        await prisma.article.update({
-            data: {
-                title,
-                description
-            },
-            where: {
-                id: id
-            }
-        });
+        await db.updateTable("Article").set({
+            title,
+            description
+        }).where("Article.id", "=", id).execute();
 
         return res.json({ success: true });
     } else {

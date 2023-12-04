@@ -27,7 +27,7 @@ model Article {
     updatedAt   DateTime  @updatedAt
     MetaData    MetaData?
 
-    @@index([id])
+    @@index([id, email])
 }
 
 model MetaData {
