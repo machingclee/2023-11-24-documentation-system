@@ -45,7 +45,7 @@ const IssuePage = () => {
                         <Link href={`/doc/${r.id}`}>{r.title}</Link>,
                         <>{r.author}</>,
                         <>{r.classification}</>,
-                        dateUtil.transform(r.createdAt)
+                        dateUtil.transform(Number(r.createdAt))
                     ]}
                 />
             </div>

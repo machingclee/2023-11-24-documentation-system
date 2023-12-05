@@ -19,25 +19,14 @@ generator kysely {
 }
 
 model Article {
-    id          Int       @id @default(autoincrement())
-    email       String?   @db.Text
-    title       String    @db.VarChar(255)
-    description String    @db.Text
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-    MetaData    MetaData?
+    id             Int    @id @default(autoincrement())
+    authorEmail    String @db.Text
+    title          String @db.VarChar(255)
+    description    String @db.Text
+    author         String
+    classification String
+    createdAt      String
+    updatedAt      String
 
-    @@index([id, email])
-}
-
-model MetaData {
-    id             Int      @id @default(autoincrement())
-    author         String   @db.VarChar(100)
-    classification String   @map("classfication") @db.VarChar(100)
-    articleid      Int      @unique
-    article        Article  @relation(fields: [articleid], references: [id])
-    createdAt      DateTime @default(now())
-    updatedAt      DateTime @updatedAt
-
-    @@index([articleid])
+    @@index([id, authorEmail, author, classification])
 }

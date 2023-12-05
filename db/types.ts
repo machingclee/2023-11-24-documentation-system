@@ -6,21 +6,14 @@ export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export type Article = {
     id: Generated<number>;
-    email: string | null;
+    authorEmail: string;
     title: string;
     description: string;
-    createdAt: Generated<Timestamp>;
-    updatedAt: Timestamp;
-};
-export type MetaData = {
-    id: Generated<number>;
     author: string;
-    classfication: string;
-    articleid: number;
-    createdAt: Generated<Timestamp>;
-    updatedAt: Timestamp;
+    classification: string;
+    createdAt: string;
+    updatedAt: string;
 };
 export type DB = {
     Article: Article;
-    MetaData: MetaData;
 };

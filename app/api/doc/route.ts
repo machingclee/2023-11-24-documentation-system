@@ -18,20 +18,15 @@ export type CreateIssueSchema = z.infer<typeof createIssueSchema>
 
 export type GetIssuesResponse = {
     success: boolean,
-    result: (Article & { author: string, classification: string })[];
+    result: Article[];
 }
 
 export const GET = async (req: NextRequest) => {
     const userEmail = requestUtil.getUseremail(req);
     const articles = await db.selectFrom("Article")
         .selectAll()
-        .leftJoin("MetaData", "MetaData.articleid", "Article.id")
-        .select(["MetaData.author", "MetaData.classfication"])
-        .where("Article.email", "=", userEmail)
+        .where("Article.authorEmail", "=", userEmail)
         .execute();
-
-    console.log("[userEmail]", userEmail);
-    console.log("[articles]", articles);
 
     return res.json({
         success: true,
@@ -51,18 +46,14 @@ export const POST = async (req: NextRequest) => {
     const { author, description, title, classification } = body;
 
     const article = await db.insertInto("Article").values({
+        author,
+        authorEmail: userEmail || "",
+        classification,
+        createdAt: "" + new Date().getTime(),
         description,
         title,
-        email: userEmail,
-        updatedAt: new Date()
+        updatedAt: "" + new Date().getTime(),
     }).returning("Article.id").executeTakeFirst()
-
-    await db.insertInto("MetaData").values({
-        articleid: article?.id || 0,
-        author: author,
-        updatedAt: new Date(),
-        classfication: classification
-    }).execute();
 
     return NextResponse.json(article, { status: 201 })
 }

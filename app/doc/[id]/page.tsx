@@ -9,7 +9,7 @@ import dateUtil from "../../../util/dateUtil";
 import useApiClient from "../../../hooks/useApiClient";
 import { useEffect, useState } from "react";
 import apiRoutes from "../../../constants/apiRoutes";
-import { Article, MetaData } from "@prisma/client";
+import { Article } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import NextButton from "../../../component/NextButton";
 import matter from "gray-matter";
@@ -31,7 +31,6 @@ export default (props: Params) => {
     }
     const apiClient = useApiClient();
     const [article, setArticle] = useState<Article | null>(null);
-    const [metaData, setMetaData] = useState<MetaData | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -41,13 +40,11 @@ export default (props: Params) => {
     }
 
     const getIssue = async (issueId: number) => {
-        const res = await apiClient.get<{ success: boolean, result: Article & { Metadata: MetaData } }>(
+        const res = await apiClient.get<{ success: boolean, result: Article }>(
             apiRoutes.GET_ISSUE(issueId)
         );
         const article = res.data.result;
-        const mataData_ = article.Metadata;
         setArticle(article);
-        setMetaData(mataData_);
     }
 
     const { content, } = matter(article?.description || "");
@@ -69,19 +66,21 @@ export default (props: Params) => {
             <Spacer />
             <div style={{ display: "flex", alignItems: "center" }} >
                 <div>
-                    {dateUtil.transform(article.createdAt)}
+                    {dateUtil.transform(Number(article.createdAt))}
                 </div>
+                <Spacer width={20} />
+                <NextButton
+                    variant="filled"
+                    size="medium"
+                    onClick={startEdit}
+                    isLoading={loading}
+                >
+                    Edit
+                </NextButton>
+
             </div>
             <Spacer />
-            <NextButton
-                variant="filled"
-                size="medium"
-                onClick={startEdit}
-                isLoading={loading}
-            >
-                Edit
-            </NextButton>
-            <Spacer />
+
             <div>
                 <MarkdownComponent source={content} />
             </div>

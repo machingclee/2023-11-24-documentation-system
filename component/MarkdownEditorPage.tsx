@@ -21,9 +21,11 @@ import boxShadow from "../constants/boxShadow";
 import { useAppSelector } from '../redux/app/hooks';
 import { CreateIssueSchema } from '../app/api/doc/route';
 
-type IssueForm = {
-    title: string;
-    description: string;
+type NewDocForm = {
+    title: string,
+    description: string,
+    author: string,
+    classification: string
 }
 
 type ErrorResponse = {
@@ -36,10 +38,13 @@ type MetaData = {
 }
 
 const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string }) => {
-    const form = useRef<IssueForm>({ description: "", title: "" });
+    const form = useRef<NewDocForm>({
+        description: "",
+        title: "",
+        author: "",
+        classification: ""
+    });
     const [desc, setDesc] = useState("");
-    const { content, data } = matter(desc);
-    const data_ = data as MetaData;
     const apiClient = useApiClient();
     const [loading, setLoading] = useState(false);
     const { rerender, Rerender, rerenderFlag } = useRerender();
@@ -49,16 +54,15 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
 
     const debouncedSetDesc = debounce((text: string) => { setDesc(text) }, 100);
     const router = useRouter();
-    const [files, setFiles] = useState<FileList | null>(null);
 
     const submitEdit = async () => {
-        const { description, title } = form.current;
+        const { description, title, author, classification } = form.current;
         const reqBody: EditIssueSchema = {
             id: parseInt(id || "-1"),
             title,
             description,
-            author: data_.author || "",
-            classification: data_.classification || "",
+            author,
+            classification,
         }
         setLoading(true);
         await apiClient.put<{ success: boolean }>(apiRoutes.PUT_ISSUE(parseInt(id || "-1")), reqBody);
@@ -66,8 +70,7 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
     }
 
     const submitCreate = async () => {
-        const { description, title } = form.current;
-        const { author = "", classification = "" } = data_
+        const { description, title, author, classification } = form.current;
         const createArticleParams: CreateIssueSchema = {
             title,
             description,
@@ -142,10 +145,12 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
     const initIssue = async (id: string | undefined) => {
         const res = await apiClient.get<{ success: boolean, result: Article }>(apiRoutes.GET_ISSUE(parseInt(id || "-1")));
         const { result } = res.data;
-        const { description, title } = result;
+        const { description, title, author, classification } = result;
         setDesc(description);
         form.current.title = title;
         form.current.description = description;
+        form.current.author = author;
+        form.current.classification = classification;
         rerender();
     }
 
@@ -157,20 +162,17 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
         }
     }, [id, hydrated])
 
-
-
     return (
         <>
             <Container>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <Rerender >
                         <div style={{ display: "flex", alignItems: "center" }}>
-                            <div style={{ fontWeight: 500 }}>Title</div>
-                            <Spacer />
+
                             <TextField
                                 style={{ backgroundColor: "white", overflow: "hidden" }}
                                 sx={{
-                                    width: "400px",
+                                    width: "200px",
                                     "& fieldset": {
                                         borderRadius: 0
                                     },
@@ -181,6 +183,40 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
                                 onChange={(e) => {
                                     const title = e.target.value;
                                     fieldUpdate({ title })
+                                }}
+                            />
+                            <Spacer />
+                            <TextField
+                                style={{ backgroundColor: "white", overflow: "hidden" }}
+                                sx={{
+                                    width: "200px",
+                                    "& fieldset": {
+                                        borderRadius: 0
+                                    },
+                                }}
+                                defaultValue={form.current.author}
+                                size='small'
+                                placeholder="Author"
+                                onChange={(e) => {
+                                    const author = e.target.value;
+                                    fieldUpdate({ author })
+                                }}
+                            />
+                            <Spacer />
+                            <TextField
+                                style={{ backgroundColor: "white", overflow: "hidden" }}
+                                sx={{
+                                    width: "200px",
+                                    "& fieldset": {
+                                        borderRadius: 0
+                                    },
+                                }}
+                                defaultValue={form.current.classification}
+                                size='small'
+                                placeholder="Classification"
+                                onChange={(e) => {
+                                    const classification = e.target.value;
+                                    fieldUpdate({ classification })
                                 }}
                             />
                         </div>
@@ -237,7 +273,7 @@ const MarkdownEditorPage = ({ type, id }: { type: "create" | "edit", id?: string
                         height: "calc(100vh - 230px)",
                         overflowY: "scroll"
                     }}>
-                        <MarkdownPreviewComponent source={content} />
+                        <MarkdownPreviewComponent source={desc} />
                     </Box>
                 </div>
             </div>

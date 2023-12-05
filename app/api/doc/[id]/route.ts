@@ -4,6 +4,7 @@ import requestUtil from "../../../../util/requestUtil";
 import { z } from "zod";
 import res from "../../../../util/res";
 import { db } from "../../../../db/database";
+import { Article } from "@prisma/client";
 
 type Params = {
     params: { id: string }
@@ -13,11 +14,10 @@ export const GET = async (req: NextRequest, params: Params) => {
     const userEmail = requestUtil.getUseremail(req);
     const id = parseInt(params.params.id);
     const article = await db.selectFrom("Article")
-        .selectAll("Article")
-        .leftJoin("MetaData", "MetaData.articleid", "Article.id")
+        .selectAll()
         .where("Article.id", "=", id)
-        .select(["MetaData.author", "MetaData.classfication"])
-        .executeTakeFirst();
+        .where("Article.authorEmail", "=", userEmail)
+        .executeTakeFirst() as Article;
 
     if (!article) {
         return NextResponse.json({ success: false, errorMessage: "no result" }, { status: 200 })
@@ -31,7 +31,7 @@ const editIssueSchema = z.object({
     title: z.string().min(1, "Title must have at least one character").max(255),
     description: z.string().min(1, "Description cannot be empty."),
     author: z.string().min(1).max(100),
-    classification: z.string().min(0).max(100),
+    classification: z.string().min(1).max(100),
 })
 
 export type EditIssueSchema = z.infer<typeof editIssueSchema>;
@@ -48,7 +48,7 @@ export const PUT = async (req: NextRequest, params: Params) => {
             .where("Article.id", "=", id).executeTakeFirst();
         const userEmail = requestUtil.getUseremail(req);
 
-        if (article?.email !== userEmail) {
+        if (article?.authorEmail !== userEmail) {
             return res.json({ success: false, errorMessage: "user email not match" });
         }
 
